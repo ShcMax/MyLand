@@ -1,8 +1,9 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-public class myGUI : EditorWindow
-{    
+public class myGUI : MonoBehaviour
+{
+    [SerializeField] Move _player;
     private string _message;
     private Rect _buttonRect;
     private Rect _boxRect;
@@ -12,21 +13,23 @@ public class myGUI : EditorWindow
     
     private float _menuBoxWidth = 200f;
     private float _menuBoxHeight = 140f;
-
-    private int _healthP = 100;
-
+    
+    private int _healthP;
     public int GUIHealth { get => _healthP; }
 
-
-    [MenuItem("Инструменты/Окна/HealthBar")]    
-    public static void ShowMyWindow()
-    {       
-        GetWindow(typeof(myGUI), false, "HealthBar");
+    private void Start()
+    {
+        _healthP = _player.PlayerMaxHealth;
+        _player.changeHealth += HealthChange;
     }
-    
+
     public void DamageGui(int _damage)
     {
         _healthP -= _damage;
+    }
+    void HealthChange (int health)
+    {
+        _healthP = health;
     }
 
 #if UNITY_EDITOR
