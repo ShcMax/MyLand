@@ -19,6 +19,9 @@ public class IK_Test : MonoBehaviour
     private float metre = 2f;
     private float scaleMult = 3f;
 
+    private Transform rightHand;    
+    private float maxDistForHands = 2f;    
+
     [Header("Foot")]
     public float footOffsetY;
     private Vector3 leftFootPos;
@@ -51,6 +54,7 @@ public class IK_Test : MonoBehaviour
         _leftFootWeightHash = Animator.StringToHash("LeftFoot");
 
         head = _anim.GetBoneTransform(HumanBodyBones.Chest);
+        rightHand = _anim.GetBoneTransform(HumanBodyBones.RightHand);        
     }
 
     // Update is called once per frame
@@ -58,22 +62,28 @@ public class IK_Test : MonoBehaviour
     {
         
     }
-
     private void OnAnimatorIK(int layerIndex)
     {
-        if (_handPoint_1)
+        if (_handPoint_1 && _handPoint_2)
         {
-            _anim.SetIKPositionWeight(AvatarIKGoal.LeftHand, _handWeight);
-            _anim.SetIKRotationWeight(AvatarIKGoal.LeftHand, _handWeight);
-            _anim.SetIKPosition(AvatarIKGoal.LeftHand, _handPoint_1.position + _handOffset);
-            _anim.SetIKRotation(AvatarIKGoal.LeftHand, _handPoint_1.rotation);
-        }
-        if (_handPoint_2)
-        {
-            _anim.SetIKPositionWeight(AvatarIKGoal.RightHand, _handWeight);
-            _anim.SetIKRotationWeight(AvatarIKGoal.RightHand, _handWeight);
-            _anim.SetIKPosition(AvatarIKGoal.RightHand, _handPoint_2.position + _handOffset);
-            _anim.SetIKRotation(AvatarIKGoal.RightHand, _handPoint_2.rotation);
+            float distHandRight = Vector3.Distance(_handPoint_2.position, rightHand.position);
+            if (distHandRight < maxDistForHands)
+            {                
+                _handWeight = float.MaxValue;
+                _anim.SetIKPositionWeight(AvatarIKGoal.LeftHand, _handWeight);
+                _anim.SetIKRotationWeight(AvatarIKGoal.LeftHand, _handWeight);
+                _anim.SetIKPosition(AvatarIKGoal.LeftHand, _handPoint_1.position + _handOffset);
+                _anim.SetIKRotation(AvatarIKGoal.LeftHand, _handPoint_1.rotation);
+
+                _anim.SetIKPositionWeight(AvatarIKGoal.RightHand, _handWeight);
+                _anim.SetIKRotationWeight(AvatarIKGoal.RightHand, _handWeight);
+                _anim.SetIKPosition(AvatarIKGoal.RightHand, _handPoint_2.position + _handOffset);
+                _anim.SetIKRotation(AvatarIKGoal.RightHand, _handPoint_2.rotation);
+            }
+            else
+            {
+                _handWeight = float.MinValue;
+            }            
         }
 
         if (_headPoint)
@@ -83,8 +93,7 @@ public class IK_Test : MonoBehaviour
             {
                 _anim.SetLookAtWeight(_lookIKWeight, eyesWeight, headWeight, bodyWeight, clampWeight);
                 _anim.SetLookAtPosition(_headPoint.position);
-            }
-            Debug.Log(dist);           
+            }                       
         }
 
         /*rightFootWeight =*/ _anim.GetFloat(_rightFootWeightHash);
@@ -112,3 +121,4 @@ public class IK_Test : MonoBehaviour
         _anim.SetIKRotation(AvatarIKGoal.LeftFoot, leftFootRot);
     }
 }
+    
