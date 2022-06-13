@@ -15,6 +15,10 @@ public class IK_Test : MonoBehaviour
     [Range(0, 1)] public float bodyWeight;
     [Range(0, 1)] public float clampWeight;
 
+    private Transform head;
+    private float metre = 2f;
+    private float scaleMult = 3f;
+
     [Header("Foot")]
     public float footOffsetY;
     private Vector3 leftFootPos;
@@ -45,6 +49,8 @@ public class IK_Test : MonoBehaviour
 
         _rightFootWeightHash = Animator.StringToHash("RightFoot");
         _leftFootWeightHash = Animator.StringToHash("LeftFoot");
+
+        head = _anim.GetBoneTransform(HumanBodyBones.Chest);
     }
 
     // Update is called once per frame
@@ -71,9 +77,14 @@ public class IK_Test : MonoBehaviour
         }
 
         if (_headPoint)
-        {
-            _anim.SetLookAtWeight(_lookIKWeight, eyesWeight, headWeight, bodyWeight, clampWeight);
-            _anim.SetLookAtPosition(_headPoint.position);
+        {           
+            var dist = Vector3.Distance(_headPoint.position, head.position) / metre;
+            if(dist <= metre * scaleMult) // множитель "3" связан с размерами игрока.
+            {
+                _anim.SetLookAtWeight(_lookIKWeight, eyesWeight, headWeight, bodyWeight, clampWeight);
+                _anim.SetLookAtPosition(_headPoint.position);
+            }
+            Debug.Log(dist);           
         }
 
         /*rightFootWeight =*/ _anim.GetFloat(_rightFootWeightHash);
