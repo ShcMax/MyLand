@@ -108,7 +108,7 @@ public class IK_Test : MonoBehaviour
         _anim.SetIKPosition(AvatarIKGoal.RightFoot, rightFootPos);
         _anim.SetIKRotation(AvatarIKGoal.RightFoot, rightFootRot);
 
-        /*leftFootWeight =*/ _anim.GetFloat(_leftFootWeightHash);
+        /*leftFootWeight = */_anim.GetFloat(_leftFootWeightHash);
         if (Physics.Raycast(leftLowerLeg.position, Vector3.down, out var hitL, 2f, mask))
         {
             leftFootPos = Vector3.Lerp(leftFootPos, hitL.point + Vector3.up * footOffsetY, Time.deltaTime * 10f);
